@@ -202,6 +202,8 @@ uint8_t matrix_key_count(void)
 /* Row pin configuration
  * row: 0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15
  * pin: C7 C6 C5 C4 C3 C2 C1 C0 E1 E0 D7 D0 D5 D4 D3 D2
+ * pin: C3 C2 C1 C0 E1 E0 D7 D5 D4 D3 D2 F2 F1 F0 B3 B4
+ *
  */
 static void init_rows(void)
 {
@@ -216,37 +218,83 @@ static void init_rows(void)
 
 static uint16_t read_rows(void)
 {
-    return (PINC&(1<<7) ? 0 : (1<<0)) |
-           (PINC&(1<<6) ? 0 : (1<<1)) |
-           (PINC&(1<<5) ? 0 : (1<<2)) |
-           (PINC&(1<<4) ? 0 : (1<<3)) |
-           (PINC&(1<<3) ? 0 : (1<<4)) |
-           (PINC&(1<<2) ? 0 : (1<<5)) |
-           (PINC&(1<<1) ? 0 : (1<<6)) |
-           (PINC&(1<<0) ? 0 : (1<<7)) |
-           (PINE&(1<<1) ? 0 : (1<<8)) |
-           (PINE&(1<<0) ? 0 : (1<<9)) |
-           (PIND&(1<<7) ? 0 : (1<<10)) |
-           (PIND&(1<<0) ? 0 : (1<<11)) |
-           (PIND&(1<<5) ? 0 : (1<<12)) |
-           (PIND&(1<<4) ? 0 : (1<<13)) |
-           (PIND&(1<<3) ? 0 : (1<<14)) |
-           (PIND&(1<<2) ? 0 : (1<<15));
+    return (PINC&(1<<3) ? 0 : (1<<0)) |
+           (PINC&(1<<2) ? 0 : (1<<1)) |
+           (PINC&(1<<1) ? 0 : (1<<2)) |
+           (PINC&(1<<0) ? 0 : (1<<3)) |
+           (PINE&(1<<1) ? 0 : (1<<4)) |
+           (PINE&(1<<0) ? 0 : (1<<5)) |
+           (PIND&(1<<7) ? 0 : (1<<6)) |
+           (PIND&(1<<5) ? 0 : (1<<7)) |
+           (PIND&(1<<4) ? 0 : (1<<8)) |
+           (PIND&(1<<3) ? 0 : (1<<9)) |
+           (PIND&(1<<2) ? 0 : (1<<10)) |
+           (PINF&(1<<2) ? 0 : (1<<11)) |
+           (PINF&(1<<1) ? 0 : (1<<12)) |
+           (PINF&(1<<0) ? 0 : (1<<13)) |
+           (PINB&(1<<3) ? 0 : (1<<14)) |
+           (PINB&(1<<4) ? 0 : (1<<15));
 }
 
 /* Column pin configuration
  * col:  0  1  2  3  4  5  6  7
- * pin: F0 F1 F2 F3 F4 F5 F6 E7
+ * pin: F0 F1 F2 F3 F4 F5 F6 E7 * orig
+ * pin: F7 F6 F5 F4 C7 C6 C5 C4 * lance
  */
 static void unselect_cols(void)
 {
     // Hi-Z(DDR:0, PORT:0) to unselect
-    DDRF  |= 0b11111111; // PB: 7 6 5 4 3 2 1 0
-    PORTF |= 0b11111111;
+	//DDRF  |= 0b11111111; // PB: 7 6 5 4 3 2 1 0
+	//PORTF |= 0b11111111;
+
+	DDRF  |= 0b11110000; // PB: 7 6 5 4 3 2 1 0
+	PORTF |= 0b11110000;
+	DDRC  |= 0b11110000; // PB: 7 6 5 4 3 2 1 0
+	PORTC |= 0b11110000;
+
 }
 
 static void select_col(uint8_t col)
 {
+	/**
     DDRF  |=  (1 << col);
     PORTF &= ~(1 << col);
+    DDRC  |=  (1 << col);
+    PORTC &= ~(1 << col);
+    **/
+
+    switch (col) {
+        case 0:
+            DDRF  |=  (1 << 7);
+            PORTF &= ~(1 << 7);
+            break;
+        case 1:
+            DDRF  |=  (1 << 6);
+            PORTF &= ~(1 << 6);
+            break;
+        case 2:
+            DDRF  |=  (1 << 5);
+            PORTF &= ~(1 << 5);
+            break;
+        case 3:
+            DDRF  |=  (1 << 4);
+            PORTF &= ~(1 << 4);
+            break;
+        case 4:
+            DDRC  |=  (1 << 7);
+            PORTC &= ~(1 << 7);
+            break;
+        case 5:
+            DDRC  |=  (1 << 6);
+            PORTC &= ~(1 << 6);
+            break;
+        case 6:
+            DDRC  |=  (1 << 5);
+            PORTC &= ~(1 << 5);
+            break;
+        case 7:
+            DDRC  |=  (1 << 4);
+            PORTC &= ~(1 << 4);
+            break;
+    }
 }
