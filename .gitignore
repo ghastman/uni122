@@ -1,2 +1,9 @@
 /obj_modelm_pjrc/
 /.dep/
+/obj_hb122kb_lufa/
+/hb122kb_lufa.eep
+/hb122kb_lufa.elf
+/hb122kb_lufa.hex
+/hb122kb_lufa.lss
+/hb122kb_lufa.map
+/hb122kb_lufa.sym
