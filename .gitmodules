@@ -1,6 +1,0 @@
-[submodule "tmk_keyboard"]
-	path = tmk_keyboard
-	url = https://github.com/tmk/tmk_keyboard
-[submodule "modelm"]
-	path = modelm
-	url = https://github.com/lmorchard/modelm
